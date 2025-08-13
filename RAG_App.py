@@ -22,7 +22,7 @@ groq_api_key = st.secrets["GROQ_API_KEY"]
 st.set_page_config(page_title="Dynamic RAG with Groq", layout="wide")
 
 st.title("Dynamic RAG with Groq, FAISS, and Llama3")
-
+st.image("")
 # Initialize session state for vector store and chat history
 if "vector" not in st.session_state:
     st.session_state.vector = None
