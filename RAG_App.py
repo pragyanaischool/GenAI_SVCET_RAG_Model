@@ -1,5 +1,3 @@
-#GROQ_API_KEY = "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"
-#HF_TOKEN = "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"
 import streamlit as st
 from dotenv import load_dotenv
 import os
