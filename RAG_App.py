@@ -59,7 +59,7 @@ with st.sidebar:
 st.header("Chat with your Documents")
 
 # Initialize the language model
-llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
+llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.3-70b-versatile")
 
 # Create the prompt template
 prompt = ChatPromptTemplate.from_template(
@@ -87,12 +87,22 @@ if prompt_input := st.chat_input("Ask a question about your documents..."):
         st.session_state.chat_history.append({"role": "user", "content": prompt_input})
 
         with st.spinner("Thinking..."):
-            document_chain = create_stuff_documents_chain(llm, prompt)
-            retriever = st.session_state.vector.as_retriever()
-            retrieval_chain = create_retrieval_chain(retriever, document_chain)
-
             start = time.process_time()
-            response = retrieval_chain.invoke({"input": prompt_input})
+            retriever = vectorstore.as_retriever()
+            docs = retriever.invoke(query)
+            if docs:
+                context = "\n\n".join([doc.page_content for doc in docs[:]])
+                chain = prompt | llm | StrOutputParser()
+                response = chain.invoke({
+                    "context": context,
+                    "input": query
+                })
+            else:
+                response = "No relevant information found."
+            #document_chain = create_stuff_documents_chain(llm, prompt)
+            #retriever = st.session_state.vector.as_retriever()
+            #retrieval_chain = create_retrieval_chain(retriever, document_chain)
+            #response = retrieval_chain.invoke({"input": prompt_input})
             response_time = time.process_time() - start
 
             with st.chat_message("assistant"):
