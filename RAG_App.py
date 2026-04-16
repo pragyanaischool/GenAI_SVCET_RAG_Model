@@ -44,12 +44,11 @@ with st.sidebar:
                         f.write(file.getbuffer())
                     loader = PyPDFLoader(file.name)
                     docs.extend(loader.load())
-
                 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 final_documents = text_splitter.split_documents(docs)
-
                 # Use a pre-trained model from Hugging Face for embeddings
                 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+                #st.session_state.vector = FAISS.from_documents(final_documents, embeddings)
                 st.session_state.vector = FAISS.from_documents(final_documents, embeddings)
                 st.success("Documents processed successfully!")
         else:
